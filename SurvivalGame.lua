@@ -112,6 +112,7 @@ function SurvivalGame.client_onCreate( self )
 		sm.game.bindChatCommand( "/elizabeth_ii", {}, "cl_onChatCommand", "Mechanic characters will take no damage" )
 		sm.game.bindChatCommand( "/respawn", {}, "cl_onChatCommand", "Respawn at last bed (or at the crash site)" )
 		sm.game.bindChatCommand( "/ship_status", {}, "cl_onChatCommand", "Check ship condition and try to repair it" )
+		sm.game.bindChatCommand( "/noaa", {}, "cl_onChatCommand", "Start an old NOAA 21 weather satellite as main telecommunication node" )
 		sm.game.bindChatCommand( "/encrypt", {}, "cl_onChatCommand", "Restrict interactions in all warehouses" )
 		sm.game.bindChatCommand( "/decrypt", {}, "cl_onChatCommand", "Unrestrict interactions in all warehouses" )
 		sm.game.bindChatCommand( "/kelner_off", {}, "cl_onChatCommand", "Use the limited inventory" )
@@ -336,6 +337,8 @@ function SurvivalGame.cl_onChatCommand( self, params )
 		self.network:sendToServer( "sv_enableRestrictions", true )
 	elseif params[1] == "/ship_status" then
 		self.network:sendToServer( "sv_checkShipStatus" )
+	elseif params[1] == "/noaa" then
+		self.network:sendToServer( "sv_gameSatEnable" )
 	elseif params[1] == "/decrypt" then
 		self.network:sendToServer( "sv_enableRestrictions", false )
 	elseif params[1] == "/milionar" then
@@ -447,7 +450,11 @@ function SurvivalGame.sv_switchGodMode( self )
 end
 
 function SurvivalGame.sv_checkShipStatus( self, state )
-	self.network:sendToClients( "client_showMessage", ( state and "Ship integrity is on 90%" or "Ship integrity is on 90%") )
+	self.network:sendToClients( "client_showMessage", ( state and "Ship integrity is on 90%" or "Ship integrity is on 90%" ) )
+end
+
+function SurvivalGame.sv_gameSatEnable( self, state )
+	self.network:sendToClients( "client_showMessage", ( state and "NOAA 21 system start." or "NOAA 21 system shutdown" ) )
 end
 
 function SurvivalGame.sv_enableRestrictions( self, state )
